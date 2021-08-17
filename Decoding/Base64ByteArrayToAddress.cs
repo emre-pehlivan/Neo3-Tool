@@ -2,6 +2,7 @@
 using System.Linq;
 using Neo;
 using Neo.IO;
+using Neo.Wallets;
 using static Neo.Helper;
 
 namespace Decoding
@@ -13,7 +14,8 @@ namespace Decoding
             byte[] result = Convert.FromBase64String(value).Reverse().ToArray();
             String hex = result.ToHexString();
             var scripthash = UInt160.Parse(hex);
-            String address = Neo.Wallets.Helper.ToAddress(scripthash);
+            var protocolSettings = ProtocolSettings.Load("protocol.json");
+            String address = scripthash.ToAddress(protocolSettings.AddressVersion);
             return address;
         }
     }

@@ -3,6 +3,7 @@ using System.Linq;
 using Neo;
 using Neo.IO;
 using System.Numerics;
+using Neo.Wallets;
 
 /*This is a tool for NEO3 data convert*/
 
@@ -192,7 +193,8 @@ namespace Decoding
                 byte[] result = Convert.FromBase64String(value).Reverse().ToArray();
                 String hex = result.ToHexString();
                 var scripthash = UInt160.Parse(hex);
-                String address = Neo.Wallets.Helper.ToAddress(scripthash);
+                var protocolSettings = ProtocolSettings.Load("protocol.json");
+                String address = scripthash.ToAddress(protocolSettings.AddressVersion);
                 Console.WriteLine("Hex: " + hex);
                 Console.WriteLine("Standard Address: " + address);
             }
@@ -231,7 +233,9 @@ namespace Decoding
             String address = args[1];
             try
             {
-                UInt160 bigEnd = Neo.Wallets.Helper.ToScriptHash(address);
+                var protocolSettings = ProtocolSettings.Load("protocol.json");
+                var bigEnd = address.ToScriptHash(protocolSettings.AddressVersion);
+
                 String littleEnd = bigEnd.ToArray().ToHexString();
                 Console.WriteLine("BigEnd: " + bigEnd);
                 Console.WriteLine("LittleEnd: " + littleEnd);
@@ -252,7 +256,8 @@ namespace Decoding
                 UInt160 littleEnd = UInt160.Parse(args[1]);
                 String bigEnd = littleEnd.ToArray().ToHexString();
                 UInt160 scriptHash = UInt160.Parse(bigEnd);
-                String address = Neo.Wallets.Helper.ToAddress(scriptHash);
+                var protocolSettings = ProtocolSettings.Load("protocol.json");
+                String address = scriptHash.ToAddress(protocolSettings.AddressVersion);
                 Console.WriteLine("Standard Address: " + address);
             }
             catch(Exception e)
@@ -269,7 +274,8 @@ namespace Decoding
             UInt160 scriptHash = UInt160.Parse(args[1]);
             try
             {
-                String address = Neo.Wallets.Helper.ToAddress(scriptHash);
+                var protocolSettings = ProtocolSettings.Load("protocol.json");
+                String address = scriptHash.ToAddress(protocolSettings.AddressVersion);
                 Console.WriteLine("Standard Address: " + address);
             }
             catch (Exception e)
